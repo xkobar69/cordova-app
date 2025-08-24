@@ -1,0 +1,7 @@
+document.addEventListener('deviceready', function () {
+    document.getElementById('status').innerText = 'Device Ready! Cordova berjalan dengan baik.';
+}, false);
+
+document.getElementById('testBtn').addEventListener('click', function () {
+    alert('Butang diklik!');
+});
