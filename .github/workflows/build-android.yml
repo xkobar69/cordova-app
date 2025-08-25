@@ -1,0 +1,61 @@
+name: Build Cordova Android 14
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # 3️⃣ Install Cordova
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      # 4️⃣ Install project dependencies
+      - name: Install project dependencies
+        run: npm install
+
+      # 5️⃣ Clean Cordova build
+      - name: Clean Cordova Build
+        run: cordova clean
+
+      # 6️⃣ Add Android platform (version 14)
+      - name: Add Android Platform
+        run: |
+          cordova platform remove android || echo "No android platform yet"
+          cordova platform add android@14.0.1
+
+      # 7️⃣ Build Android AAB (App Bundle)
+      - name: Build Android AAB
+        run: cordova build android --release -- --packageType=bundle --warning-mode all
+
+      # 8️⃣ Upload AAB Artifact
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: platforms/android/app/build/outputs/bundle/release/*.aab
+
+      # 9️⃣ Build Android APK
+      - name: Build Android APK
+        run: cordova build android --release --warning-mode all
+
+      # 🔟 Upload APK Artifact
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: platforms/android/app/build/outputs/apk/release/*.apk
